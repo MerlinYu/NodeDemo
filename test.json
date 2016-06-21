@@ -1,0 +1,9 @@
+{
+  "name" : "node_demo",
+  "main" : "index.js",
+  "dependencies": {
+        "argv": "0.0.2",
+        "fs" :"0.0.2"
+    }
+
+}
