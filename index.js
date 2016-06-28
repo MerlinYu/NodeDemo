@@ -3,6 +3,9 @@ var test_print = require("./tests/index");
 var test_exports = require("./tests/shape");
 var http = require('http');
 var child_process = require('child_process');
+var startServer = require('./server');
+var async_demo = require('./tests/async_demo');
+var _ = require('underscore');
 
 function testModuleExports() {
   test_print("world");
@@ -13,22 +16,35 @@ function testProcessArgv() {
   console.log(" prcess argv 1:"+process.argv[1]);
 }
 
+function testServerClient() {
+  startServer();
+
+  var child = child_process.spawn('node',['./client.js'], {
+    stdio:[0,1,2,'ipc']
+  });
+
+  // the other wat to access child process stdout
+  // child.stdout.on('data', function (data) {
+  //   console.log('stdout: ' + data);
+  // });
+  //
+  // child.stderr.on('data', function (data) {
+  //     console.log('stderr: ' + data);
+  // });
+  //
+  //
+  child.on('close', function (code) {
+      console.log('child process exited with code ' + code);
+  });
+
+  child.on('message', function(msg) {
+    console.log("the cliend said : " + msg.hello);
+    // process.exit(0);
+  });
+  child.send({hello:'hello client!'});
+}
+
 testProcessArgv();
 
-console.log("start child process");
-var child = child_process.spawn('node',['./child_copy.js']);
-child.stdout.on('data', function (data) {
-    console.log('stdout: ' + data);
-});
-
-child.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-});
-
-child.on('close', function (code) {
-    console.log('child process exited with code ' + code);
-});
-
-// var server = child_process.spawn('node', ['./server.js']);
-// var client = child_process.spawn('node', ['./client.js']);
-// start child process to request server
+//async_demo();
+testServerClient();
