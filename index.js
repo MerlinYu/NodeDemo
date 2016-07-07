@@ -6,6 +6,12 @@ var child_process = require('child_process');
 var startServer = require('./server');
 var async_demo = require('./tests/async_demo');
 var _ = require('underscore');
+var fs = require('fs');
+
+var data= {
+  name:"merlin",
+  age:20
+}
 
 function testModuleExports() {
   test_print("world");
@@ -44,7 +50,11 @@ function testServerClient() {
   child.send({hello:'hello client!'});
 }
 
-testProcessArgv();
+//testProcessArgv();
 
 //async_demo();
-testServerClient();
+//testServerClient();
+
+fs.writeFile('./data.json',JSON.stringify(data),function(err,callback) {
+  if(err) {callback(err)}
+});
